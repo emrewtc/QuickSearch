@@ -92,7 +92,7 @@ public class quickSearch
 	public static void main(String[] args) 
 	{
 		
-		String text = "senin ben amk sen aq amk sadjasdjasasjk amk dsadsadasrweeeedsadasdassdasdasdsadasdasdsadjlsdhsjdalsjdsaldhlsajdhjsakhdjksahdkjsahdkjsahdkjsahdjksahdjsahdjkashkdashkjdas amk ee";
+		String text = "dsadsadasrweeeedsadasdassdasdasdsadasdasdsadjlsdhsjdalsjdsaldhlsajdhjsakhdjksahdkjsahdkjsahdkjsahdjksahdjsahdjkashkdashkjdas ee";
 		String pattern = "amk";
 		qs(text.toCharArray(), pattern.toCharArray());
 
