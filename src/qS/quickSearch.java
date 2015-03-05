@@ -1,11 +1,13 @@
 package qS;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 //import java.util.Arrays;
 
 public class quickSearch 
 {	
-	
+	public static List<Integer> matchIndex = new ArrayList<Integer>();
 	public static int matchCount = 0;
 	public static int comparision = 0;
 	public static long totalTime;
@@ -29,6 +31,8 @@ public class quickSearch
 		int i;
 		matchCount=0; 
 		comparision = 0;
+		matchIndex.clear();
+		hasFound = false;
 		int textSize = text.length;
 		int patternSize = pattern.length;
 		char[] shiftedText = Arrays.copyOfRange(text, 0, patternSize);
@@ -43,6 +47,7 @@ public class quickSearch
 			if (Arrays.equals(pattern, shiftedText)) 
 			{
 				System.out.println("Found at " + i);
+				matchIndex.add(i);
 				matchCount++;
 				hasFound = true;
 			}
