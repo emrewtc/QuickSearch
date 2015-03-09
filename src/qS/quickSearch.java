@@ -53,18 +53,26 @@ public class quickSearch
 			}
 				// Shifting
 				shiftedText = new char[patternSize];
-				if(i + patternSize > textSize -1)
+
+				if(i + patternSize > textSize)
 				{
-					i += qsBc[text[textSize-1]];
+					i += qsBc[text[textSize -1]];
 					comparision++;	
 				}
+					
 				else
 				{
-					i += qsBc[text[i + patternSize]];
+					if(i+patternSize >= textSize)
+						i += qsBc[text[textSize-1]];
+					else
+						i += qsBc[text[i + patternSize]];
 					comparision++;
 				}
 				
-				shiftedText = Arrays.copyOfRange(text, i, i+patternSize);
+				if(i+patternSize >= textSize)
+					shiftedText = Arrays.copyOfRange(text, textSize - patternSize, textSize);
+				else
+					shiftedText = Arrays.copyOfRange(text, i, i+patternSize);
 		}
 		
 		if(matchCount == 0)
@@ -97,7 +105,7 @@ public class quickSearch
 	public static void main(String[] args) 
 	{
 		
-		String text = "dsadsadasrweeeedsadasdassdasdasdsadasdasdsadjlsdhsjdalsjdsaldhlsajdhjsakhdjksahdkjsahdkjsahdkjsahdjksahdjsahdjkashkdashkjdas ee";
+		String text = "senin ben amk sen aq amk sadjasdjasasjk amk dsadsadasrweeeedsadasdassdasdasdsadasdasdsadjlsdhsjdalsjdsaldhlsajdhjsakhdjksahdkjsahdkjsahdkjsahdjksahdjsahdjkashkdashkjdas amk ee";
 		String pattern = "amk";
 		qs(text.toCharArray(), pattern.toCharArray());
 
