@@ -44,20 +44,44 @@ public class quickSearch
 		i = 0;		
 		while(i <= textSize - patternSize)
 		{
-			if (Arrays.equals(pattern, shiftedText)) 
+			int c = 0;
+			for (int j = 0; j < patternSize; j++) 
+			{
+				if( pattern[j] == shiftedText[j])
+				{
+					c++;
+					comparision++;
+				}
+				else
+				{
+					comparision++;
+					break;
+				}
+					
+			}
+			if(c >= patternSize)
 			{
 				System.out.println("Found at " + i);
 				matchIndex.add(i);
 				matchCount++;
 				hasFound = true;
 			}
+				
+			
+			/*if (Arrays.equals(pattern, shiftedText)) 
+			{
+				System.out.println("Found at " + i);
+				matchIndex.add(i);
+				matchCount++;
+				hasFound = true;
+			}*/
 				// Shifting
 				shiftedText = new char[patternSize];
 
 				if(i + patternSize > textSize)
 				{
 					i += qsBc[text[textSize -1]];
-					comparision++;	
+					//comparision++;	
 				}
 					
 				else
@@ -66,7 +90,7 @@ public class quickSearch
 						i += qsBc[text[textSize-1]];
 					else
 						i += qsBc[text[i + patternSize]];
-					comparision++;
+					//comparision++;
 				}
 				
 				if(i+patternSize >= textSize)

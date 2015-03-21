@@ -29,11 +29,22 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.prefs.BackingStoreException;
 
 public class QuickSearchApp {
 
+	private int index = 0;
+	private int matchCount = 0; 
+	private int comparision = 0;
+	private int g = 0;
+	private int r = 0;
+	private int j = 0;
+	private boolean willShift = false;
+	private boolean initialized = false;
+	private char[] shiftedText;
+	
 	private JFrame frame;
 	private DefaultHighlighter highlighter;
 	private DefaultHighlightPainter hPainter;
@@ -68,12 +79,12 @@ public class QuickSearchApp {
 	    this.highlighter = new DefaultHighlighter();
 	    this.hPainter = new DefaultHighlightPainter(Color.LIGHT_GRAY);
 		frame = new JFrame();
-		frame.setBounds(100, 100, 493, 445);
+		frame.setBounds(100, 100, 646, 445);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
 		final JTextPane textPane = new JTextPane();
-		textPane.setBounds(85, 24, 217, 82);
+		textPane.setBounds(85, 24, 340, 82);
 		frame.getContentPane().add(textPane);
 		textPane.setHighlighter(highlighter);
 		
@@ -90,27 +101,27 @@ public class QuickSearchApp {
 		frame.getContentPane().add(textPane_1);
 		
 		final JLabel lblTime = new JLabel("Run Time: ");
-		lblTime.setBounds(301, 251, 84, 16);
+		lblTime.setBounds(440, 251, 84, 16);
 		frame.getContentPane().add(lblTime);
 		
 		JLabel lblComparision = new JLabel("Comparision:");
-		lblComparision.setBounds(301, 279, 95, 16);
+		lblComparision.setBounds(440, 279, 95, 16);
 		frame.getContentPane().add(lblComparision);
 		
 		JLabel lblMatch = new JLabel("Match:");
-		lblMatch.setBounds(301, 307, 61, 16);
+		lblMatch.setBounds(440, 307, 61, 16);
 		frame.getContentPane().add(lblMatch);
 		
 		final JLabel lblTimeResult = new JLabel("");
-		lblTimeResult.setBounds(397, 251, 61, 16);
+		lblTimeResult.setBounds(536, 251, 61, 16);
 		frame.getContentPane().add(lblTimeResult);
 		
 		final JLabel lblComparisionResult = new JLabel("");
-		lblComparisionResult.setBounds(397, 279, 61, 16);
+		lblComparisionResult.setBounds(536, 279, 61, 16);
 		frame.getContentPane().add(lblComparisionResult);
 		
 		final JLabel lblMatchResult = new JLabel("");
-		lblMatchResult.setBounds(397, 307, 61, 16);
+		lblMatchResult.setBounds(536, 307, 61, 16);
 		frame.getContentPane().add(lblMatchResult);
 		
 		
@@ -143,8 +154,201 @@ public class QuickSearchApp {
 			public void actionPerformed(ActionEvent arg0) {
 			}
 		});
-		btnNewButton.setBounds(345, 24, 117, 68);
+		btnNewButton.setBounds(493, 24, 117, 68);
 		frame.getContentPane().add(btnNewButton);
+		
+		JButton buttonStepbyStep = new JButton("Step by Step");
+		buttonStepbyStep.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) 
+			{
+				
+				char[] text = textPane.getText().toCharArray();
+				char[] pattern = textPane_1.getText().toCharArray();
+				int textSize = text.length;
+				int patternSize = pattern.length;
+				int[] qsBc = new int[65536]; // size of an integer is 4 bytes = 16 bits = 2^16 = 65536
+				
+				if(!initialized)
+				{
+					shiftedText = Arrays.copyOfRange(text, 0, patternSize);
+					initialized = true;					
+				}
+				
+				
+				// Pre-Processing
+				quickSearch.preQsBc(pattern, patternSize, qsBc);
+				
+				// Searching 
+				
+				if(index <= textSize - patternSize)
+				{		
+		    			if (j < patternSize) 
+						{	
+							if(pattern[j] == shiftedText[j])
+							{
+								if(g == 0)
+								{
+									// PAINT IT GREEN
+									try 
+									{
+										hPainter = new DefaultHighlightPainter(Color.GREEN);
+										highlighter = new DefaultHighlighter();
+										textPane.setHighlighter(highlighter);
+										highlighter.addHighlight(index,index + 1, hPainter);
+									}
+									catch (BadLocationException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+									g++;
+									j++;
+									return;
+									
+								}
+								
+								else if(g > 0)
+				    			{
+					    			try 
+					    			{
+					    				hPainter = new DefaultHighlightPainter(Color.GREEN);
+					    				highlighter = new DefaultHighlighter();
+					    				textPane.setHighlighter(highlighter);
+					    				highlighter.addHighlight(index + g,index + g + 1, hPainter);
+					    			}
+					    			catch (BadLocationException e) {
+					    				// TODO Auto-generated catch block
+					    				e.printStackTrace();
+					    			}
+					    			g++;
+					    			willShift = false;
+					    			comparision++;
+				    			}
+	
+				    			j++;
+												    			
+					    	}
+							
+							else if(pattern[j] != shiftedText[j])
+							{
+									if(r == 0)
+									{
+										// PAINT IT RED
+										try 
+										{
+											hPainter = new DefaultHighlightPainter(Color.RED);
+											highlighter = new DefaultHighlighter();
+											textPane.setHighlighter(highlighter);
+											highlighter.addHighlight(index, index + 1, hPainter);
+										}
+										catch (BadLocationException e) {
+											// TODO Auto-generated catch block
+											e.printStackTrace();
+										}
+										r++;
+										comparision++;
+										return;
+										
+									}
+									
+									else if(r > 0)
+									{
+										// PAINT IT RED
+										try 
+										{
+											hPainter = new DefaultHighlightPainter(Color.RED);
+											highlighter = new DefaultHighlighter();
+											textPane.setHighlighter(highlighter);
+											highlighter.addHighlight(index, index + patternSize, hPainter);
+										}
+										catch (BadLocationException e) {
+											// TODO Auto-generated catch block
+											e.printStackTrace();
+										}
+										
+										r = 0;
+										j = 0;
+										g = 0;
+										willShift = true;
+										comparision++;
+									}
+							}
+									
+						}
+							
+								
+						}
+						
+						if(g >= patternSize)
+						{
+							System.out.println("Found at " + index);
+							matchCount++;
+							willShift = true;
+							j = 0;
+							g = 0;
+							lblMatchResult.setText(Integer.toString(matchCount));
+						}
+					
+					if(willShift)
+					{				
+						shiftedText = new char[patternSize];
+						if(index + patternSize > textSize)
+						{
+							index += qsBc[text[textSize -1]];	
+						}
+						
+						else
+						{
+							if(index+patternSize >= textSize)
+								index += qsBc[text[textSize-1]];
+							else
+								index += qsBc[text[index + patternSize]];
+						}
+						
+						if(index+patternSize >= textSize)
+						{
+							shiftedText = Arrays.copyOfRange(text, textSize - patternSize, textSize);
+							
+						}
+						else
+							shiftedText = Arrays.copyOfRange(text, index, index+patternSize);
+						
+			    		willShift = false;
+						
+					}
+
+				}
+				
+				
+				
+				
+			
+		});
+		buttonStepbyStep.setBounds(493, 96, 117, 68);
+		frame.getContentPane().add(buttonStepbyStep);
+		
+		JButton btnClear = new JButton("Clear");
+		btnClear.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) 
+			{
+				textPane.setText("");
+				textPane_1.setText("");
+				lblComparisionResult.setText("");
+				lblMatchResult.setText("");
+				lblTimeResult.setText("");
+				index = 0;
+		    	matchCount = 0;
+		    	comparision = 0;
+		    	g = 0;
+		    	r = 0;
+		    	j = 0;
+		    	initialized = false;
+		    	willShift = false;
+			}
+		});
+		btnClear.setBounds(493, 170, 117, 42);
+		frame.getContentPane().add(btnClear);
 		
 		
 	}
